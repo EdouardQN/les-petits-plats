@@ -1,0 +1,14 @@
+{
+  "name": "projet-7-les-petits-plats",
+  "version": "1.0.0",
+  "description": "Projet 7 Les petits plats",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Edouard Quennesson",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.3.0"
+  }
+}
