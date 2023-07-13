@@ -1,0 +1,84 @@
+// Custom properties
+
+//Variables
+$primary: #FFD15B;
+$secondary: #E5E5E5;
+$light: #FFFFFF;
+
+//Font family
+$font-family-base: 'Manrope', sans-serif;
+$headings-font-family: 'Anton', sans-serif;
+
+//Positions
+$position-values: (
+  0: 0,
+  5: 5%,
+  10: 10%,
+  20: 20%,
+  50: 50%,
+  100: 100%
+);
+
+//Search Input
+.form-control::placeholder{
+    opacity: 0.5 !important;
+}
+
+.form{
+    position: relative;
+}
+
+.form .bi-search{
+    position: absolute;
+    top:8px;
+    right: 10px;
+    color: white;
+    background-color: black;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.form-input{
+    height: 55px;
+    border-radius: 10px;
+}
+
+//Card
+.card-text {
+    font-size: 14px;
+  }
+
+.header-main{
+    background-image: url('../assets/lampos-aritonang-24gR_9lCdes-unsplash 1.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.card img{
+    object-fit: cover;
+    max-height: 253px;
+}
+
+//Breakpoints
+.number-receipes{
+    margin: 32px 0;
+}
+
+@media (min-width: 768px){
+    .number-receipes{
+        margin: 0;
+    }
+
+}
+
+.header-title {
+    font-size: calc(1.525rem + 3.3vw);
+}
+
+@media (min-width: 1200px) {
+    .header-title {
+      font-size: 4rem;
+    }
+} 
+
+@import "../node_modules/bootstrap/scss/bootstrap";
