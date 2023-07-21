@@ -1,15 +1,15 @@
 // Custom properties
 
-//Variables
+// Variables
 $primary: #FFD15B;
 $secondary: #E5E5E5;
 $light: #FFFFFF;
 
-//Font family
+// Font family
 $font-family-base: 'Manrope', sans-serif;
 $headings-font-family: 'Anton', sans-serif;
 
-//Positions
+// Positions
 $position-values: (
   0: 0,
   3: 3%,
@@ -20,7 +20,7 @@ $position-values: (
   100: 100%
 );
 
-//Search Input
+// Search Input
 .form-control::placeholder{
     opacity: 0.5 !important;
 }
@@ -44,7 +44,27 @@ $position-values: (
     border-radius: 10px;
 }
 
-//Card
+// Dropdown
+.dropdown{
+    input{
+        width: 85%;
+        position: relative;
+    }
+    input:focus-within{
+        outline: none;
+    }
+    .bi-search{
+        position: absolute;
+        top: 12px;
+        right: 26px;
+    }
+    a:hover,
+    a:focus{
+        background-color: $primary;
+    }
+}
+
+// Card
 .card-text {
     font-size: 14px;
   }
@@ -60,13 +80,13 @@ $position-values: (
     max-height: 253px;
 }
 
-//Breakpoints
-.number-receipes{
+// Breakpoints
+.number-recipes{
     margin: 32px 0;
 }
 
 @media (min-width: 768px){
-    .number-receipes{
+    .number-recipes{
         margin: 0;
     }
 

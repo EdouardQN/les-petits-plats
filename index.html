@@ -15,6 +15,7 @@
     <title>Les petits plats</title>
 </head>
 <body class="bg-secondary">
+    <!-- custom class | boostrap classes -->
     <header class="header-main | position-relative container-fluid d-flex flex-column justify-content-center align-items-center gap-2 p-5" style="height: 664px;">
       <img class="position-absolute top-5 align-self-start" src="assets/Les petits plats.png" alt="Logo Les petits plats">    
       <h1 class="header-title |  text-primary text-center">CHERCHEZ PARMI PLUS DE 1500 RECETTES DU QUOTIDIEN, SIMPLES ET DÉLICIEUSES</h1>
@@ -35,30 +36,29 @@
                 <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Ingrédients
                 </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Jus de citron</a></li>
-                  <li><a class="dropdown-item" href="#">Glaçons</a></li>
-                  <li><a class="dropdown-item" href="#">Tomate</a></li>
-                  <li><a class="dropdown-item" href="#">Poulet</a></li>
-                  <li><a class="dropdown-item" href="#">Poivrons Rouge</a></li>
-                  <li><a class="dropdown-item" href="#">Thon en miettes</a></li>
-                  <li><a class="dropdown-item" href="#">Vinaigrette</a></li>
+                <ul class="dropdown-ingredients | dropdown-menu">
+                  <li>
+                    <input class="dropdown-item ms-3" type="text" name="search-ingredient" id="search-ingredient">
+                    <i class="bi bi-search"></i>
+                  </li>
                 </ul>
                 <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Appareil    
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <ul class="dropdown-appareils | dropdown-menu">
+                  <li>
+                    <input class="dropdown-item ms-3" type="text" name="search-ingredient" id="search-ingredient">
+                    <i class="bi bi-search"></i>
+                  </li>
                 </ul>
                 <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Ustensiles 
                   </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <ul class="dropdown-ustentiles | dropdown-menu">
+                  <li>
+                    <input class="dropdown-item ms-3" type="text" name="search-ingredient" id="search-ingredient">
+                    <i class="bi bi-search"></i>
+                  </li>
                 </ul>
             </div>
             <h6 class="number-recipes | text-dark align-self-md-center"></h6>
@@ -70,6 +70,7 @@
     </main>
     <script type="module" src="js/recipes.js"></script>
     <script type="module" src="js/cards.js"></script>
+    <script type="module" src="js/dropdowns.js"></script>
 </body>
 
 </html>
