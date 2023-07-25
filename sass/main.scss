@@ -65,9 +65,24 @@ $position-values: (
 }
 
 // Card
-.card-text {
-    font-size: 14px;
-  }
+.card{
+    .text-secondary{
+        font-size: 12px;
+    }
+
+    .card-text {
+        font-size: 14px;
+    }
+
+    .card-title{
+        font-size: 18px;
+    }
+
+    img{
+        object-fit: cover;
+        max-height: 253px;
+    }
+}
 
 .header-main{
     background-image: url('../assets/lampos-aritonang-24gR_9lCdes-unsplash 1.png');
@@ -75,10 +90,6 @@ $position-values: (
     background-position: center;
 }
 
-.card img{
-    object-fit: cover;
-    max-height: 253px;
-}
 
 // Breakpoints
 .number-recipes{
