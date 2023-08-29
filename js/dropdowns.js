@@ -45,85 +45,61 @@ setDropdownElements(dropdownUstentiles, tabUstentiles);
 const dropdownInputSearch = document.querySelectorAll('.dropdown-search');
 const dropdownTags = document.querySelectorAll('.dropdown-tag');
 
-function setFilterArrayAccordingToIngredientTag(){
-    let arrayIncludingFilteredIngredients = [];
-    for (let j=0; j<recipes.length; j++){
-        for (let l=0; l<recipes[j].ingredients.length; l++){
-            if(((recipes[j].ingredients[l].ingredient).toLowerCase()).includes(arrayIncludingTagSelectedElements)){
-                arrayIncludingFilteredIngredients.push(recipes[j]);             
-            }
+function deleteTagFromArray(arrayTag, tagSelected){
+    for (let a=0; a<arrayTag.length; a++){
+        if (arrayTag[a] === tagSelected){
+            arrayTag.splice(a, 1);
         }
     }
-    return arrayIncludingFilteredIngredients;
+    return arrayTag;
 }
 
-function setFilterArrayAccordingToAppareilsTag(){
-    let arrayIncludingFilteredAppareils = [];
-    for(let j=0; j<recipes.length; j++){
-        if(((recipes[j].appliance).toLowerCase()).includes(arrayIncludingTagSelectedElements)){
-            arrayIncludingFilteredAppareils.push(recipes[j]);
-        }
-    }
-    return arrayIncludingFilteredAppareils;
-}
-
-function setFilterArrayAccordingToUstentilesTag(){
-    let arrayIncludingFilteredUstentiles = [];
-    for (let j=0; j<recipes.length; j++){
-        for (let l=0; l<recipes[j].ustensils.length; l++){
-            if(((recipes[j].ustensils[l]).toLowerCase()).includes(arrayIncludingTagSelectedElements)){
-                arrayIncludingFilteredUstentiles.push(recipes[j]);             
-            }
-        }
-    }
-    return arrayIncludingFilteredUstentiles;
-}
-
-let arrayIncludingTagSelectedElements = [], arrayIncludingFilteredElements = [];
+let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]];
+const includesAll = (arr, values) => values.every(v => arr.includes(v));
 for (let i=0; i<dropdownTags.length; i++){
     dropdownTags[i].addEventListener('click', () => {
         dropdownTags[i].classList.toggle("bg-primary");
         if(dropdownTags[i].classList.contains("bg-primary")){
-            arrayIncludingTagSelectedElements.push(dropdownTags[i].firstChild.innerText);
-        }
-        else{
-            for (let a=0; a<arrayIncludingTagSelectedElements.length; a++){
-                if (arrayIncludingTagSelectedElements[a] === dropdownTags[i].firstChild.innerText){
-                    arrayIncludingTagSelectedElements.splice(a, 1);
-                }
-            }
-        }
-        console.log("contenu array tagFilter", arrayIncludingTagSelectedElements);
-        if(arrayIncludingTagSelectedElements != 0){
             if(i<=34){
-               let ingredientsToAddToFilteredArray = setFilterArrayAccordingToIngredientTag();
-                console.log("Tag ingredients array value : ", ingredientsToAddToFilteredArray);
+                arrayOfTagIngredients.push(dropdownTags[i].firstChild.innerText);
             }
             else if(i<=45){
-                let appliancesToAddToFilteredArray = setFilterArrayAccordingToAppareilsTag();
-                console.log("Tag appareils array value", appliancesToAddToFilteredArray);
+                arrayOfTagAppareils.push(dropdownTags[i].firstChild.innerText);
             }
             else{
-                let ustentilesToAddToFilteredArray = setFilterArrayAccordingToUstentilesTag();
-                console.log("Tag ustentiles array value", ustentilesToAddToFilteredArray);
+                arrayOfTagUstentiles.push(dropdownTags[i].firstChild.innerText);
             }
-            if (arrayIncludingFilteredElements.length === 0){
-                for (let i=0; i<ingredientsToAddToFilteredArray.length; i++){
-                    arrayIncludingFilteredElements[i] = ingredientsToAddToFilteredArray[i];
-                }
-            }
-            else{
-                for (let i=0; i<ingredientsToAddToFilteredArray.length; i++){
-                    if(!(ingredientsToAddToFilteredArray.includes(arrayIncludingFilteredElements[i].id))){
-                        arrayIncludingFilteredElements.splice(i, 1);
-                    }
-                    arrayIncludingFilteredElements.push(ingredientsToAddToFilteredArray[i]);
-                }            
-            }
-            console.log("final array: ", arrayIncludingFilteredElements);
         }
         else{
-            arrayIncludingFilteredElements = [];
+            deleteTagFromArray(arrayOfTagIngredients, dropdownTags[i].firstChild.innerText);
+            deleteTagFromArray(arrayOfTagAppareils);
+            deleteTagFromArray(arrayOfTagUstentiles);
         }
+
+        for (let j=0; j<arrayOfTagIngredients.length; j++){
+            ingredientsForOneRecipeToCheck = new Array(recipes.length);
+            for (let k=0; k<recipes.length; k++){
+                ingredientsForOneRecipeToCheck[k] = new Array(recipes[k].ingredients.length);
+                for (let l=0; l<recipes[k].ingredients.length; l++){
+                    ingredientsForOneRecipeToCheck[k][l] = (recipes[k].ingredients[l].ingredient).toLowerCase(); 
+                }
+                if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && !(arrayOfFilteredRecipes.includes(recipes[k]))){
+                    arrayOfFilteredRecipes.push(recipes[k]);
+                    
+                }
+                // if(arrayOfTagIngredients.includes(((recipes[k].ingredients[l].ingredient).toLowerCase())) && !(arrayOfFilteredRecipes.includes(recipes[k]))){
+                //     arrayOfFilteredRecipes.push(recipes[k]);
+                //     console.log(arrayOfFilteredRecipes[k], " ajouté au filtre");
+                //     // if(j>0 && !(((recipes[k].ingredients[l].ingredient).toLowerCase()).includes(arrayOfTagIngredients[j-1]))){
+                //     //     console.log(arrayOfFilteredRecipes[j], " déjà dans le filtre, mais ne contient pas le filtre ", arrayOfTagIngredients[j-1])
+                //     //     arrayOfFilteredRecipes.splice(k, 1);
+                //     // }
+                // }
+                
+            }
+        }
+        console.log("contenu array ingredients to check", ingredientsForOneRecipeToCheck);
+        console.log("contenu array tagFilter", arrayOfFilteredRecipes);
+        arrayOfFilteredRecipes = [];
     })
 }
