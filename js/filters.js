@@ -1,18 +1,15 @@
-import {createDocumentElementAndAttributes} from './cards.js';
-import {buildCardDom} from './cards.js';
-import {rowCard} from './cards.js';
-import {setRecipeFilterToAnArray} from './cards.js';
-import {appendDomToHtml} from './cards.js';
-import {nbrRecettes} from './cards.js';
-import {recettes} from './cards.js';
+import {createDocumentElementAndAttributes, buildCardDom, rowCard, setRecipeFilterToAnArray, appendDomToHtml, nbrRecettes, recettes} from './cards.js';
+import {arrayOfTagIngredients, arrayOfTagAppareils, arrayOfTagUstentiles, checkIfRecipesIncludeArraysOfTagElements} from './dropdowns.js';
 
 let cardContainer = document.querySelector('.card-container');
 const inputSearch = document.querySelector('.search-recipe');
-// Input search user
-let inputFilter = [], inputFilterDom, rowCardFiltered, cardFilteredDOM;
-inputSearch.addEventListener('input', (e) =>{
-    const valueInput = e.target.value.toLowerCase();
+
+function setInputFilter(input){
+    const valueInput = input.target.value.toLowerCase();
     if(valueInput.length >= 3){
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients);
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagAppareils);
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagUstentiles);
         inputFilter = setRecipeFilterToAnArray(valueInput);
         inputFilterDom = buildCardDom(inputFilter);
         rowCardFiltered = createDocumentElementAndAttributes('div', "card-row | row d-flex g-5", null);
@@ -26,4 +23,7 @@ inputSearch.addEventListener('input', (e) =>{
         cardContainer.appendChild(rowCard);
         recettes.innerText = `${nbrRecettes} recettes`;  
     }
-}); 
+}
+// Input search user
+let inputFilter = [], inputFilterDom, rowCardFiltered, cardFilteredDOM;
+inputSearch.addEventListener('input', (e) =>{setInputFilter(e)}); 

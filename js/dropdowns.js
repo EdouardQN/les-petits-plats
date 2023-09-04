@@ -1,23 +1,16 @@
 import {recipes} from './recipes.js';
 
-export const dropdownIngredients = document.querySelector('.dropdown-ingredients');
-export const dropdownAppareils = document.querySelector('.dropdown-appareils');
-export const dropdownUstentiles = document.querySelector('.dropdown-ustentiles');
+const ingredients = document.querySelector('.dropdown-ingredients');
+const appareils = document.querySelector('.dropdown-appareils');
+const ustentiles = document.querySelector('.dropdown-ustentiles');
 
-let tabIngredients = [], tabAppareils = [], tabUstentiles = [], tabNbrOfIngredients = [], tabNbrOfUstentiles = [], sumIngr = 0, sumUst = 0;
+let tabIngredients = [], tabAppareils = [], tabUstentiles = [], sumIngr = 0, sumUst = 0;
+//Add numbers according to ingredients and ustentils length 
 for (let i=0; i<recipes.length; i++){
-    tabNbrOfIngredients.push(recipes[i].ingredients.length);
-    tabNbrOfUstentiles.push(recipes[i].ustensils.length);
+    sumIngr += recipes[i].ingredients.length;
+    sumUst += recipes[i].ustensils.length;
 } 
-
-for (let j = 0; j < tabNbrOfIngredients.length; j++) {
-    sumIngr += tabNbrOfIngredients[j];
-}
-
-for (let j = 0; j < tabNbrOfUstentiles.length; j++) {
-    sumUst += tabNbrOfUstentiles[j];
-}
-//Sets arrays for dropdowns
+//Sets tagArrays for dropdowns
 for (let i=0; i<recipes.length; i++){
     for (let j=0; j<recipes[i].ingredients.length; j++){
         for (let k=0; k<sumIngr; k++){
@@ -34,20 +27,36 @@ for (let i=0; i<recipes.length; i++){
 }
 
 function setDropdownElements(dropdownElement, arrayOfElements){
-    let HtmlElementDropdown;
+    let HtmlElementDropdown, HtmlElementDropdownChild;
     const uniqueElement = arrayOfElements.filter((el, index) => arrayOfElements.indexOf(el) === index);
     for (let i=0; i<uniqueElement.length; i++){
-        HtmlElementDropdown = `<li class="dropdown-tag"><a class="dropdown-item-tag | dropdown-item">${uniqueElement[i]}</a></li>`;
-        dropdownElement.innerHTML += HtmlElementDropdown;
+        HtmlElementDropdown = document.createElement('li');
+        if (dropdownElement.classList.contains("dropdown-ingredients")){
+            HtmlElementDropdown.setAttribute('class', "dropdown-tag ingredient");
+        }
+        else if(dropdownElement.classList.contains("dropdown-appareils")){
+            HtmlElementDropdown.setAttribute('class', "dropdown-tag appareil");
+        }
+        else if(dropdownElement.classList.contains("dropdown-ustentiles")){
+            HtmlElementDropdown.setAttribute('class', "dropdown-tag ustentile");
+        }
+        HtmlElementDropdownChild = document.createElement('a');
+        HtmlElementDropdownChild.classList.add("dropdown-item-tag", "|", "dropdown-item");
+        HtmlElementDropdownChild.innerText = uniqueElement[i];
+        HtmlElementDropdown.appendChild(HtmlElementDropdownChild);
+        dropdownElement.appendChild(HtmlElementDropdown) ;
     }
 }
 
-setDropdownElements(dropdownIngredients, tabIngredients);
-setDropdownElements(dropdownAppareils, tabAppareils);
-setDropdownElements(dropdownUstentiles, tabUstentiles);
+setDropdownElements(ingredients, tabIngredients);
+setDropdownElements(appareils, tabAppareils);
+setDropdownElements(ustentiles, tabUstentiles);
 
-const dropdownInputSearch = document.querySelectorAll('.dropdown-search');
-const dropdownTags = document.querySelectorAll('.dropdown-tag');
+//Once dropdown DOM generated, get them to use the event listener
+const dropdownIngredients = document.querySelectorAll('.ingredient');
+const dropdownAppareils = document.querySelectorAll('.appareil');
+const dropdownUstentiles = document.querySelectorAll('.ustentile');
+
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
         if (arrayTag[a] === tagSelected){
@@ -57,11 +66,11 @@ function deleteTagFromArray(arrayTag, tagSelected){
     return arrayTag;
 }
 
-let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]];
+export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]];
 //Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
 
-function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
+export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
     for (let j=0; j<arrayOfTagElements.length; j++){
         for (let k=0; k<recipes.length; k++){
             if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && 
@@ -74,24 +83,24 @@ function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
     }
 }
 
-for (let i=0; i<dropdownTags.length; i++){
-    dropdownTags[i].addEventListener('click', () => {
-        dropdownTags[i].classList.toggle("bg-primary");
-        if(dropdownTags[i].classList.contains("bg-primary")){
-            if(i<=119){
-                arrayOfTagIngredients.push(dropdownTags[i].firstChild.innerText);
+function setTagFilter(dropdownTags){
+    dropdownTags.classList.toggle("bg-primary");
+        //check if the dropdown is already selected or not
+        if(dropdownTags.classList.contains("bg-primary")){
+            if(dropdownTags.classList.contains("ingredient")){
+                arrayOfTagIngredients.push(dropdownTags.firstChild.innerText);
             }
-            else if(i<=130){
-                arrayOfTagAppareils.push(dropdownTags[i].firstChild.innerText);
+            else if(dropdownTags.classList.contains("appareil")){
+                arrayOfTagAppareils.push(dropdownTags.firstChild.innerText);
             }
             else{
-                arrayOfTagUstentiles.push(dropdownTags[i].firstChild.innerText);
+                arrayOfTagUstentiles.push(dropdownTags.firstChild.innerText);
             }
         }
         else{
-            deleteTagFromArray(arrayOfTagIngredients, dropdownTags[i].firstChild.innerText);
-            deleteTagFromArray(arrayOfTagAppareils, dropdownTags[i].firstChild.innerText);
-            deleteTagFromArray(arrayOfTagUstentiles, dropdownTags[i].firstChild.innerText);
+            deleteTagFromArray(arrayOfTagIngredients, dropdownTags.firstChild.innerText);
+            deleteTagFromArray(arrayOfTagAppareils, dropdownTags.firstChild.innerText);
+            deleteTagFromArray(arrayOfTagUstentiles, dropdownTags.firstChild.innerText);
         }
 
         ingredientsForOneRecipeToCheck = new Array(recipes.length);
@@ -99,7 +108,6 @@ for (let i=0; i<dropdownTags.length; i++){
         ustentilesForOneRecipeToCheck = new Array(recipes.length);
 
         for (let k=0; k<recipes.length; k++){
-            
             ingredientsForOneRecipeToCheck[k] = new Array(recipes[k].ingredients.length);
             //Array of all ingredients per recipe for all of them
             for (let l=0; l<recipes[k].ingredients.length; l++){
@@ -114,7 +122,17 @@ for (let i=0; i<dropdownTags.length; i++){
         checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients);
         checkIfRecipesIncludeArraysOfTagElements(arrayOfTagAppareils);
         checkIfRecipesIncludeArraysOfTagElements(arrayOfTagUstentiles);
-        console.log("contenu array tagFilter", arrayOfFilteredRecipes);
+        // console.log("contenu array tagFilter", arrayOfFilteredRecipes);
         arrayOfFilteredRecipes = [];
-    })
 }
+
+//allow to trigger add event listener from an ingredient selected or appareil or ustentile
+function addEventListenerToASpecificDropDown (dropdown){
+    for (let i=0; i<dropdown.length; i++){
+        dropdown[i].addEventListener('click', () => {setTagFilter(dropdown[i])});
+    }
+}
+
+addEventListenerToASpecificDropDown(dropdownIngredients);
+addEventListenerToASpecificDropDown(dropdownAppareils);
+addEventListenerToASpecificDropDown(dropdownUstentiles);
