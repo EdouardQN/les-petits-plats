@@ -4,15 +4,32 @@ export const dropdownIngredients = document.querySelector('.dropdown-ingredients
 export const dropdownAppareils = document.querySelector('.dropdown-appareils');
 export const dropdownUstentiles = document.querySelector('.dropdown-ustentiles');
 
+let tabIngredients = [], tabAppareils = [], tabUstentiles = [], tabNbrOfIngredients = [], tabNbrOfUstentiles = [], sumIngr = 0, sumUst = 0;
+for (let i=0; i<recipes.length; i++){
+    tabNbrOfIngredients.push(recipes[i].ingredients.length);
+    tabNbrOfUstentiles.push(recipes[i].ustensils.length);
+} 
+
+for (let j = 0; j < tabNbrOfIngredients.length; j++) {
+    sumIngr += tabNbrOfIngredients[j];
+}
+
+for (let j = 0; j < tabNbrOfUstentiles.length; j++) {
+    sumUst += tabNbrOfUstentiles[j];
+}
 //Sets arrays for dropdowns
-let tabIngredients = [], tabAppareils = [], tabUstentiles = [];
 for (let i=0; i<recipes.length; i++){
     for (let j=0; j<recipes[i].ingredients.length; j++){
-        tabIngredients[i] = recipes[i].ingredients[j].ingredient.toLowerCase();
+        for (let k=0; k<sumIngr; k++){
+            tabIngredients.push(recipes[i].ingredients[j].ingredient.toLowerCase());
+        }
     }
     tabAppareils[i] = recipes[i].appliance.toLowerCase();
     for (let j=0; j<recipes[i].ustensils.length; j++){
-        tabUstentiles[i] = recipes[i].ustensils[j].toLowerCase();
+        for(let k=0; k<sumUst; k++){
+            tabUstentiles.push(recipes[i].ustensils[j].toLowerCase());
+
+        }
     }
 }
 
@@ -25,26 +42,12 @@ function setDropdownElements(dropdownElement, arrayOfElements){
     }
 }
 
-//a corriger
-// function searchDropDownElement(dropdownElement, arrayOfElements, input){
-//     let filteredHtmlElementDropdown;
-//     const resultOfInputSearch = arrayOfElements.filter((el) => arrayOfElements.indexOf(el).includes(input));
-//     for (let i=1; i<uniqueElement.length; i++){
-//         if(resultOfInputSearch[i] != undefined){
-//             filteredHtmlElementDropdown = `<li class="dropdown-tag"><a class="dropdown-item-tag | dropdown-item">${resultOfInputSearch[i]}</a></li>`;
-//         }
-//         dropdownElement.innerHTML += filteredHtmlElementDropdown;
-//     }
-
-// }
-
 setDropdownElements(dropdownIngredients, tabIngredients);
 setDropdownElements(dropdownAppareils, tabAppareils);
 setDropdownElements(dropdownUstentiles, tabUstentiles);
 
 const dropdownInputSearch = document.querySelectorAll('.dropdown-search');
 const dropdownTags = document.querySelectorAll('.dropdown-tag');
-
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
         if (arrayTag[a] === tagSelected){
@@ -54,16 +57,31 @@ function deleteTagFromArray(arrayTag, tagSelected){
     return arrayTag;
 }
 
-let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]];
+let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]];
+//Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
+
+function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
+    for (let j=0; j<arrayOfTagElements.length; j++){
+        for (let k=0; k<recipes.length; k++){
+            if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && 
+                includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils) &&
+                includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles) &&
+                !(arrayOfFilteredRecipes.includes(recipes[k]))){
+                arrayOfFilteredRecipes.push(recipes[k]);
+            }
+        }
+    }
+}
+
 for (let i=0; i<dropdownTags.length; i++){
     dropdownTags[i].addEventListener('click', () => {
         dropdownTags[i].classList.toggle("bg-primary");
         if(dropdownTags[i].classList.contains("bg-primary")){
-            if(i<=34){
+            if(i<=119){
                 arrayOfTagIngredients.push(dropdownTags[i].firstChild.innerText);
             }
-            else if(i<=45){
+            else if(i<=130){
                 arrayOfTagAppareils.push(dropdownTags[i].firstChild.innerText);
             }
             else{
@@ -72,33 +90,30 @@ for (let i=0; i<dropdownTags.length; i++){
         }
         else{
             deleteTagFromArray(arrayOfTagIngredients, dropdownTags[i].firstChild.innerText);
-            deleteTagFromArray(arrayOfTagAppareils);
-            deleteTagFromArray(arrayOfTagUstentiles);
+            deleteTagFromArray(arrayOfTagAppareils, dropdownTags[i].firstChild.innerText);
+            deleteTagFromArray(arrayOfTagUstentiles, dropdownTags[i].firstChild.innerText);
         }
 
-        for (let j=0; j<arrayOfTagIngredients.length; j++){
-            ingredientsForOneRecipeToCheck = new Array(recipes.length);
-            for (let k=0; k<recipes.length; k++){
-                ingredientsForOneRecipeToCheck[k] = new Array(recipes[k].ingredients.length);
-                for (let l=0; l<recipes[k].ingredients.length; l++){
-                    ingredientsForOneRecipeToCheck[k][l] = (recipes[k].ingredients[l].ingredient).toLowerCase(); 
-                }
-                if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && !(arrayOfFilteredRecipes.includes(recipes[k]))){
-                    arrayOfFilteredRecipes.push(recipes[k]);
-                    
-                }
-                // if(arrayOfTagIngredients.includes(((recipes[k].ingredients[l].ingredient).toLowerCase())) && !(arrayOfFilteredRecipes.includes(recipes[k]))){
-                //     arrayOfFilteredRecipes.push(recipes[k]);
-                //     console.log(arrayOfFilteredRecipes[k], " ajouté au filtre");
-                //     // if(j>0 && !(((recipes[k].ingredients[l].ingredient).toLowerCase()).includes(arrayOfTagIngredients[j-1]))){
-                //     //     console.log(arrayOfFilteredRecipes[j], " déjà dans le filtre, mais ne contient pas le filtre ", arrayOfTagIngredients[j-1])
-                //     //     arrayOfFilteredRecipes.splice(k, 1);
-                //     // }
-                // }
-                
+        ingredientsForOneRecipeToCheck = new Array(recipes.length);
+        appareilsForOneRecipeToCheck = new Array(recipes.length);
+        ustentilesForOneRecipeToCheck = new Array(recipes.length);
+
+        for (let k=0; k<recipes.length; k++){
+            
+            ingredientsForOneRecipeToCheck[k] = new Array(recipes[k].ingredients.length);
+            //Array of all ingredients per recipe for all of them
+            for (let l=0; l<recipes[k].ingredients.length; l++){
+                ingredientsForOneRecipeToCheck[k][l] = (recipes[k].ingredients[l].ingredient).toLowerCase(); 
+            }
+            appareilsForOneRecipeToCheck[k] = (recipes[k].appliance).toLowerCase(); 
+            ustentilesForOneRecipeToCheck[k] = new Array(recipes[k].ustensils.length);
+            for (let l=0; l<recipes[k].ustensils.length; l++){
+                ustentilesForOneRecipeToCheck[k][l] = (recipes[k].ustensils[l]).toLowerCase();
             }
         }
-        console.log("contenu array ingredients to check", ingredientsForOneRecipeToCheck);
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients);
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagAppareils);
+        checkIfRecipesIncludeArraysOfTagElements(arrayOfTagUstentiles);
         console.log("contenu array tagFilter", arrayOfFilteredRecipes);
         arrayOfFilteredRecipes = [];
     })
