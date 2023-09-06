@@ -1,4 +1,5 @@
 import {recipes} from './recipes.js';
+import {inputSearch} from './filters.js';
 
 export let rowCard = document.querySelector('.card-row');
 // Create element document and set attributes to it
@@ -56,26 +57,6 @@ export function buildCardDom(arrayElement) {
     return col;
 }
 
-export function setRecipeFilterToAnArray(valueToBeFiltered){
-    let filteredElements = [], isAlreadyInTheArrayToFilter = false;
-    for(let i=0; i<recipes.length; i++){
-        if (((recipes[i].name).toLowerCase()).includes(valueToBeFiltered) || ((recipes[i].description).toLowerCase()).includes(valueToBeFiltered)){
-            filteredElements.push(recipes[i]);
-            isAlreadyInTheArrayToFilter = true;
-        }
-        for(let j=0; j<recipes[i].ingredients.length; j++){
-            if (((recipes[i].ingredients[j].ingredient).toLowerCase()).includes(valueToBeFiltered)){
-                if(!isAlreadyInTheArrayToFilter){ 
-                    filteredElements.push(recipes[i]); 
-                    isAlreadyInTheArrayToFilter = true;
-                }
-            }
-        }
-    }
-    // console.log("filter element array", filteredElements)
-    return filteredElements;
-}
-
 export function appendDomToHtml(dom, index, divCardToPutInContainer){
     for (let i=0; i<index.length; i++){
         for (let j=0; j<index[i].ingredients.length; j++){     
@@ -86,6 +67,8 @@ export function appendDomToHtml(dom, index, divCardToPutInContainer){
 }
 
 function init(){
+    //if the user refreshes the page, input search is reset
+    inputSearch.value = '';
     let recipesDOM = buildCardDom(recipes);
     appendDomToHtml(recipesDOM, recipes, rowCard);
     console.log(recipes[0]);
