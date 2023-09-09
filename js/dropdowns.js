@@ -1,13 +1,15 @@
 import {recipes} from './recipes.js';
+import {createDocumentElementAndAttributes} from './cards.js';
 import {buildFilterCardDom, compareBothFilterAndTagArrays} from './filters.js';
 
 let tabIngredients = [], tabAppareils = [], tabUstentiles = [], sumIngr = 0, sumUst = 0;
-export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]];
+export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]], tagHTML, tagHTMLContent, tagDeleteIcon;
 //Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
 const searchIngredient = document.querySelector('#search-ingredients');
 const searchAppareil = document.querySelector('#search-appareils');
 const searchUstentile = document.querySelector('#search-ustentiles');
+const tagSelectedContainer = document.querySelector('.tags-container');
 
 function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeContent){
     searchBar.addEventListener('input', (e) => {
@@ -59,6 +61,17 @@ function setDropdownElements(dropdownElement, arrayOfElements){
     }
 }
 
+
+function setSelectedTagInHTMLContainer(tagName){
+    tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
+    tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative pe-none", tagName);
+    tagDeleteIcon = createDocumentElementAndAttributes('i', "selected-tag-delete | bi-x-lg position-absolute pe-auto", null);
+    tagHTMLContent.appendChild(tagDeleteIcon);
+    tagHTML.append(tagHTMLContent);        
+    tagSelectedContainer.appendChild(tagHTML);
+    return tagHTML.childNodes[0].childNodes[0].data;
+}
+
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
         if (arrayTag[a] === tagSelected){
@@ -75,7 +88,11 @@ export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
                 includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils) &&
                 includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles) &&
                 !(arrayOfFilteredRecipes.includes(recipes[k]))){
+                    console.log("recette n°", recipes[k].id, " : ", recipes[k].ingredients, " " )
                 arrayOfFilteredRecipes.push(recipes[k]);
+            }
+            else{
+                arrayOfFilteredRecipes.splice(k, 1);
             }
         }
     }
@@ -88,6 +105,7 @@ export function setTagFilter(dropdownTags){
     dropdownTags.classList.toggle("bg-primary");
     //check if the dropdown is already selected or not
     if(dropdownTags.classList.contains("bg-primary")){
+        const tagTextInContainer = setSelectedTagInHTMLContainer(dropdownTags.innerText);
         if(dropdownTags.classList.contains("ingredient")){
             arrayOfTagIngredients.push(dropdownTags.firstChild.innerText);
         }
@@ -99,6 +117,11 @@ export function setTagFilter(dropdownTags){
         }
     }
     else{
+        for(let b=0; b<tagSelectedContainer.childNodes.length; b++){
+            if(dropdownTags.innerText === tagSelectedContainer.childNodes[b].innerText){
+                tagSelectedContainer.childNodes[b].remove();
+            }
+        }
         deleteTagFromArray(arrayOfTagIngredients, dropdownTags.firstChild.innerText);
         deleteTagFromArray(arrayOfTagAppareils, dropdownTags.firstChild.innerText);
         deleteTagFromArray(arrayOfTagUstentiles, dropdownTags.firstChild.innerText);
@@ -136,6 +159,7 @@ function addEventListenerToASpecificDropDown (dropdown){
     for (let i=0; i<dropdown.length; i++){
         dropdown[i].addEventListener('click', () => {
             tagFilter = setTagFilter(dropdown[i]);
+            console.log(tagFilter);
             let filterCompared = compareBothFilterAndTagArrays();
             buildFilterCardDom(filterCompared);
         });
@@ -145,6 +169,10 @@ function addEventListenerToASpecificDropDown (dropdown){
 const ingredients = document.querySelector('.dropdown-ingredients');
 const appareils = document.querySelector('.dropdown-appareils');
 const ustentiles = document.querySelector('.dropdown-ustentiles');
+
+searchIngredient.value = '';
+searchAppareil.value = '';
+searchUstentile.value = '';
 //Add numbers according to ingredients and ustentils length 
 for (let i=0; i<recipes.length; i++){
     sumIngr += recipes[i].ingredients.length;
@@ -186,4 +214,4 @@ const dropdownUstentilesIntoAnArray = [...dropdownUstentiles];
 
 lookForASpecificTag(searchIngredient, dropdownIngredientsIntoAnArray, dropdownIngredients);
 lookForASpecificTag(searchAppareil, dropdownAppareilsIntoAnArray, dropdownAppareils);
-lookForASpecificTag(searchIngredient, dropdownIngredientsIntoAnArray, dropdownIngredients);
+lookForASpecificTag(searchUstentile, dropdownUstentilesIntoAnArray, dropdownUstentiles);

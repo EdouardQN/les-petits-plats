@@ -65,11 +65,10 @@ export function compareBothFilterAndTagArrays(){
 }
 
 export function buildFilterCardDom(finalFilteredArray){
-
+    cardContainer.innerHTML = '';
     filteredDom = buildCardDom(finalFilteredArray);
     rowCardFiltered = createDocumentElementAndAttributes('div', "card-row | row d-flex g-5", null);
     cardFilteredDOM = appendDomToHtml(filteredDom, finalFilteredArray, rowCardFiltered);
-    cardContainer.innerHTML = '';
     cardContainer.appendChild(rowCardFiltered);
     recettes.innerText = `${finalFilteredArray.length} recettes`;
     if (finalFilteredArray.length === 0){

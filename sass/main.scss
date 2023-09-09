@@ -66,6 +66,20 @@ $position-values: (
     }
 }
 
+//Tags
+.selected-tag{
+
+    &-btn{
+        z-index: 1;
+    }
+
+    &-delete{
+        z-index: 2;
+        left: 70%;
+        top: 20%;
+    }
+}
+
 // Card
 .card{
     width: 400px;
