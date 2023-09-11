@@ -69,12 +69,12 @@ $position-values: (
 //Tags
 .selected-tag{
 
-    &-btn{
-        z-index: 1;
-    }
+    // &-btn{
+    //     z-index: 1;
+    // }
 
     &-delete{
-        z-index: 2;
+        // z-index: 2;
         left: 70%;
         top: 20%;
     }
