@@ -1,8 +1,8 @@
 import {recipes} from './recipes.js';
 import {createDocumentElementAndAttributes, buildCardDom, rowCard, appendDomToHtml, nbrRecettes, recettes} from './cards.js';
-import {tagFilter} from './dropdowns.js';
+import {tagFilter, arrayOfTagIngredients, arrayOfTagAppareils, arrayOfTagUstentiles} from './dropdowns.js';
 
-let inputFilter = [], filteredDom, rowCardFiltered, cardFilteredDOM;
+let inputFilter = [], filteredDom, rowCardFiltered, cardFilteredDOM, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
 let cardContainer = document.querySelector('.card-container');
 export const inputSearch = document.querySelector('.search-recipe');
 
@@ -64,17 +64,36 @@ export function compareBothFilterAndTagArrays(){
     return finalFilteredArray;
 }
 
-export function buildFilterCardDom(finalFilteredArray){
+export function checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(finalArray){
+    //Checking for tags
+    if ((tagFilter.length === 0 && arrayOfTagIngredients.length !== 0) || 
+        (tagFilter.length === 0 && arrayOfTagAppareils.length !==0) ||
+        (tagFilter.length === 0 && arrayOfTagUstentiles.length !== 0)){
+        return true;
+    }
+    //Checking for input
+    if (finalArray.length === 0 && inputSearch.value.length >= 3){
+        return true;
+    }
+    return false;
+}
+
+
+export function buildFilterCardDom(finalFilteredArray, booleanForFilter){
     cardContainer.innerHTML = '';
     filteredDom = buildCardDom(finalFilteredArray);
     rowCardFiltered = createDocumentElementAndAttributes('div', "card-row | row d-flex g-5", null);
     cardFilteredDOM = appendDomToHtml(filteredDom, finalFilteredArray, rowCardFiltered);
     cardContainer.appendChild(rowCardFiltered);
     recettes.innerText = `${finalFilteredArray.length} recettes`;
-    if (finalFilteredArray.length === 0){
+    if (finalFilteredArray.length === 0 && !booleanForFilter){
         cardContainer.innerHTML = '';
         cardContainer.appendChild(rowCard);
         recettes.innerText = `${nbrRecettes} recettes`; 
+    }
+    else if(finalFilteredArray.length === 0 && booleanForFilter){
+        cardContainer.innerHTML = '';
+        cardContainer.appendChild(rowCardFiltered);
     }
 
 }
@@ -82,6 +101,7 @@ export function buildFilterCardDom(finalFilteredArray){
 inputSearch.addEventListener('input', (e) =>{
     inputFilter = setInputFilter();
     let filterCompared = compareBothFilterAndTagArrays();
-    buildFilterCardDom(filterCompared);
+    isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
+    buildFilterCardDom(filterCompared, isFinalArrayEmptyButNotOneOfTheFiltersArrays);
     // console.log("résultat input filter", inputFilter);
 }); 

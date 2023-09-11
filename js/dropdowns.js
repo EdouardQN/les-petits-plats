@@ -1,8 +1,8 @@
 import {recipes} from './recipes.js';
 import {createDocumentElementAndAttributes} from './cards.js';
-import {buildFilterCardDom, compareBothFilterAndTagArrays} from './filters.js';
+import {buildFilterCardDom, compareBothFilterAndTagArrays, checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs} from './filters.js';
 
-let tabIngredients = [], tabAppareils = [], tabUstentiles = [], sumIngr = 0, sumUst = 0;
+let tabIngredients = [], tabAppareils = [], tabUstentiles = [], sumIngr = 0, sumUst = 0, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
 export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]], tagHTML, tagHTMLContent, tagDeleteIcon;
 //Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
@@ -32,7 +32,7 @@ function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeConten
 
 function setDropdownElements(dropdownElement, arrayOfElements){
     let HtmlElementDropdown, HtmlElementDropdownChild;
-    //no duplicates
+    //no duplicates and ordered alpha
     const elements = arrayOfElements.filter((el, index) => arrayOfElements.indexOf(el) === index);
     const orderedElements = elements.sort((a, b) => a.localeCompare(b, 'fr', {ignorePunctuation: true}));
     for (let i=0; i<orderedElements.length; i++){
@@ -88,7 +88,6 @@ export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
                 includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils) &&
                 includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles) &&
                 !(arrayOfFilteredRecipes.includes(recipes[k]))){
-                    console.log("recette n°", recipes[k].id, " : ", recipes[k].ingredients, " " )
                 arrayOfFilteredRecipes.push(recipes[k]);
             }
             else{
@@ -159,9 +158,9 @@ function addEventListenerToASpecificDropDown (dropdown){
     for (let i=0; i<dropdown.length; i++){
         dropdown[i].addEventListener('click', () => {
             tagFilter = setTagFilter(dropdown[i]);
-            console.log(tagFilter);
             let filterCompared = compareBothFilterAndTagArrays();
-            buildFilterCardDom(filterCompared);
+            isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
+            buildFilterCardDom(filterCompared, isFinalArrayEmptyButNotOneOfTheFiltersArrays);
         });
     }
 }
