@@ -2,7 +2,7 @@ import {recipes} from './recipes.js';
 import {createDocumentElementAndAttributes} from './cards.js';
 import {buildFilterCardDom, compareBothFilterAndTagArrays, checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs} from './filters.js';
 
-let tabIngredients = [], tabAppareils = [], tabUstentiles = [], sumIngr = 0, sumUst = 0, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
+let tabIngredients = [], tabAppareils = [], tabUstentiles = [], tabSelectedContainer = [], sumIngr = 0, sumUst = 0, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
 export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]], tagHTML, tagHTMLContent, tagDeleteIcon;
 //Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
@@ -57,20 +57,22 @@ function setDropdownElements(dropdownElement, arrayOfElements){
         HtmlElementDropdownChild.classList.add("dropdown-item-tag", "|", "dropdown-item");
         HtmlElementDropdownChild.innerText = orderedElements[i];
         HtmlElementDropdown.appendChild(HtmlElementDropdownChild);
-        dropdownElement.appendChild(HtmlElementDropdown) ;
+        dropdownElement.appendChild(HtmlElementDropdown);
     }
 }
 
 
 function setSelectedTagInHTMLContainer(tagName){
+    // console.log(document.querySelector('.tags-container').removeChild(document.querySelector('.tags-container').children[0]))
     tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
     tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative", tagName);
+    // tagHTMLContent.setAttribute('onClick', "");
     tagDeleteIcon = createDocumentElementAndAttributes('i', "selected-tag-delete | bi-x-lg position-absolute", null);
     tagHTMLContent.appendChild(tagDeleteIcon);
-    tagHTML.append(tagHTMLContent);        
+    tagHTML.append(tagHTMLContent);     
     tagSelectedContainer.appendChild(tagHTML);
-    return tagHTML.childNodes[0].childNodes[0].data;
 }
+
 
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
@@ -81,46 +83,49 @@ function deleteTagFromArray(arrayTag, tagSelected){
     return arrayTag;
 }
 
+function deleteTagFromHTMLContainer(tagSelected){
+    tagSelected.remove();
+    // for (let i=0; i<btnTags.length; i++){
+    //     if(btnTags[i].innerText === tagSelected){
+    //         btnTags.splice(i, 1);
+    //     }
+    // }
+}
+
 export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
-    console.log("début arrayOfFilteredRecipes", arrayOfFilteredRecipes);
     for (let j=0; j<arrayOfTagElements.length; j++){
         for (let k=0; k<recipes.length; k++){
-            
             if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && 
-                            //length 50,                           length 1 puis 2
                 includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils) &&
                 includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles) &&
                 !(arrayOfFilteredRecipes.includes(recipes[k]))){
-                    console.log("includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients)", includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients))
-                    console.log("includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils)", includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils))
-                    console.log("includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles)", includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles))
                 arrayOfFilteredRecipes.push(recipes[k]);
-                console.log("on push la recette ", recipes[k].id);
             }
             else{
-                arrayOfFilteredRecipes.splice(k, 1); 
-                
+                for(let l=0; l<arrayOfFilteredRecipes.length; l++){
+                    if (arrayOfFilteredRecipes[l] === recipes[k]){
+                        arrayOfFilteredRecipes.splice(l, 1); 
+                    }
+                }
             }
         }
     }
     if(arrayOfTagIngredients.length === 0 && arrayOfTagAppareils.length === 0 && arrayOfTagUstentiles.length === 0){
         arrayOfFilteredRecipes = [];
     }
-    console.log("fin arrayOfFilteredRecipes", arrayOfFilteredRecipes);
-
 }
 
 export function setTagFilter(dropdownTags){
     dropdownTags.classList.toggle("bg-primary");
     //check if the dropdown is already selected or not
     if(dropdownTags.classList.contains("bg-primary")){
-        const tagTextInContainer = setSelectedTagInHTMLContainer(dropdownTags.innerText);
+        setSelectedTagInHTMLContainer(dropdownTags.innerText);
+        tabSelectedContainer.push(tagSelectedContainer.childNodes[1].childNodes[0])
         if(dropdownTags.classList.contains("ingredient")){
             arrayOfTagIngredients.push(dropdownTags.firstChild.innerText);
         }
         else if(dropdownTags.classList.contains("appareil")){
             arrayOfTagAppareils.push(dropdownTags.firstChild.innerText);
-            console.log("contenu de array of tag appareils", arrayOfTagAppareils);
         }
         else{
             arrayOfTagUstentiles.push(dropdownTags.firstChild.innerText);
@@ -140,7 +145,6 @@ export function setTagFilter(dropdownTags){
     checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients);
     checkIfRecipesIncludeArraysOfTagElements(arrayOfTagAppareils);
     checkIfRecipesIncludeArraysOfTagElements(arrayOfTagUstentiles);
-    console.log("résultat arrayOfFilteredRecipes", arrayOfFilteredRecipes);
     return arrayOfFilteredRecipes;
 }
 
@@ -172,7 +176,6 @@ function addEventListenerToASpecificDropDown (dropdown){
             let filterCompared = compareBothFilterAndTagArrays();
             isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
             buildFilterCardDom(filterCompared, isFinalArrayEmptyButNotOneOfTheFiltersArrays);
-            //inutile de reset l'array, ça ne change rien
         });
     }
 }
@@ -226,11 +229,3 @@ const dropdownUstentilesIntoAnArray = [...dropdownUstentiles];
 lookForASpecificTag(searchIngredient, dropdownIngredientsIntoAnArray, dropdownIngredients);
 lookForASpecificTag(searchAppareil, dropdownAppareilsIntoAnArray, dropdownAppareils);
 lookForASpecificTag(searchUstentile, dropdownUstentilesIntoAnArray, dropdownUstentiles);
-
-//Non Fonctionnel
-// let btnTags = document.querySelectorAll('.selected-tag-btn');
-// for (let i=0; i<btnTags.length; i++){
-//     btnTags[i].addEventListener('click', (e) => {
-//         console.log(e.target);
-//     })
-// }
