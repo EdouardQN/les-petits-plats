@@ -3,7 +3,7 @@ import {createDocumentElementAndAttributes} from './cards.js';
 import {buildFilterCardDom, compareBothFilterAndTagArrays, checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs} from './filters.js';
 
 let tabIngredients = [], tabAppareils = [], tabUstentiles = [], tabSelectedContainer = [], sumIngr = 0, sumUst = 0, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
-export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], arrayOfFilteredRecipes = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]], tagHTML, tagHTMLContent, tagDeleteIcon;
+export let arrayOfTagIngredients = [], arrayOfTagUstentiles = [], arrayOfTagAppareils = [], ingredientsForOneRecipeToCheck = [[]], appareilsForOneRecipeToCheck = [], ustentilesForOneRecipeToCheck = [[]], tagHTML, tagHTMLContent, tagDeleteIcon;
 //Allow to check includes() between two arrays
 const includesAll = (arr, values) => values.every(v => arr.includes(v));
 const searchIngredient = document.querySelector('#search-ingredients');
@@ -14,6 +14,13 @@ const tagSelectedContainer = document.querySelector('.tags-container');
 function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeContent){
     searchBar.addEventListener('input', (e) => {
         let inputValue = e.target.value.toLowerCase();
+        // const filteredDropdownArrayContent = dropdownArrayContent.filter(content => content.childNodes[0].innerText.includes(inputValue));
+        // console.log(filteredDropdownArrayContent)
+        // console.log("dropdownNodeContent", dropdownNodeContent);
+
+        // if (filteredDropdownArrayContent.length !== 0){
+        //     dropdownNodeContent = filteredDropdownArrayContent;
+        // }
         for (let i=0; i<dropdownArrayContent.length; i++){
             if(inputValue.length > 0){
                 if ((dropdownArrayContent[i].innerText).includes(inputValue)){
@@ -75,6 +82,9 @@ function setSelectedTagInHTMLContainer(tagName){
 
 
 function deleteTagFromArray(arrayTag, tagSelected){
+    // console.log("arrayOfTags before", arrayTag)
+    // const deleteFromTag = arrayTag.filter(tag => {if(tag !== tagSelected) return tag});
+    // console.log("tag after", deleteFromTag);
     for (let a=0; a<arrayTag.length; a++){
         if (arrayTag[a] === tagSelected){
             arrayTag.splice(a, 1);
@@ -82,37 +92,16 @@ function deleteTagFromArray(arrayTag, tagSelected){
     }
     return arrayTag;
 }
-
-function deleteTagFromHTMLContainer(tagSelected){
-    tagSelected.remove();
-    // for (let i=0; i<btnTags.length; i++){
-    //     if(btnTags[i].innerText === tagSelected){
-    //         btnTags.splice(i, 1);
-    //     }
-    // }
-}
-
-export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
-    for (let j=0; j<arrayOfTagElements.length; j++){
-        for (let k=0; k<recipes.length; k++){
-            if (includesAll(ingredientsForOneRecipeToCheck[k], arrayOfTagIngredients) && 
-                includesAll(appareilsForOneRecipeToCheck[k], arrayOfTagAppareils) &&
-                includesAll(ustentilesForOneRecipeToCheck[k], arrayOfTagUstentiles) &&
-                !(arrayOfFilteredRecipes.includes(recipes[k]))){
-                arrayOfFilteredRecipes.push(recipes[k]);
-            }
-            else{
-                for(let l=0; l<arrayOfFilteredRecipes.length; l++){
-                    if (arrayOfFilteredRecipes[l] === recipes[k]){
-                        arrayOfFilteredRecipes.splice(l, 1); 
-                    }
-                }
-            }
-        }
-    }
-    if(arrayOfTagIngredients.length === 0 && arrayOfTagAppareils.length === 0 && arrayOfTagUstentiles.length === 0){
-        arrayOfFilteredRecipes = [];
-    }
+// faire 3 paramètres pour chaque tag array
+export function checkIfRecipesIncludeArraysOfTagElements(tagIngredients, tagAppareils, tagUstentiles){
+    const arrayOfFilteredRecipes = recipes.filter(
+    recipe => 
+        recipe.ingredients.some((el) => includesAll(el.ingredient.toLowerCase(), (tagIngredients))) &&
+        recipe.appliance.toLowerCase().includes(tagAppareils) &&
+        recipe.ustensils.some((el) => includesAll(el.toLowerCase(), tagUstentiles))
+    );
+    // console.log(arrayOfFilteredRecipes)
+    return arrayOfFilteredRecipes;
 }
 
 export function setTagFilter(dropdownTags){
@@ -141,30 +130,8 @@ export function setTagFilter(dropdownTags){
         deleteTagFromArray(arrayOfTagAppareils, dropdownTags.firstChild.innerText);
         deleteTagFromArray(arrayOfTagUstentiles, dropdownTags.firstChild.innerText);
     }
-    setArraysOfTags();
-    checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients);
-    checkIfRecipesIncludeArraysOfTagElements(arrayOfTagAppareils);
-    checkIfRecipesIncludeArraysOfTagElements(arrayOfTagUstentiles);
+    const arrayOfFilteredRecipes = checkIfRecipesIncludeArraysOfTagElements(arrayOfTagIngredients, arrayOfTagAppareils, arrayOfTagUstentiles);
     return arrayOfFilteredRecipes;
-}
-
-function setArraysOfTags(){
-    ingredientsForOneRecipeToCheck = new Array(recipes.length);
-    appareilsForOneRecipeToCheck = new Array(recipes.length);
-    ustentilesForOneRecipeToCheck = new Array(recipes.length);
-
-    for (let k=0; k<recipes.length; k++){
-        ingredientsForOneRecipeToCheck[k] = new Array(recipes[k].ingredients.length);
-        //Array of all ingredients per recipe for all of them
-        for (let l=0; l<recipes[k].ingredients.length; l++){
-            ingredientsForOneRecipeToCheck[k][l] = (recipes[k].ingredients[l].ingredient).toLowerCase(); 
-        }
-        appareilsForOneRecipeToCheck[k] = (recipes[k].appliance).toLowerCase(); 
-        ustentilesForOneRecipeToCheck[k] = new Array(recipes[k].ustensils.length);
-        for (let l=0; l<recipes[k].ustensils.length; l++){
-            ustentilesForOneRecipeToCheck[k][l] = (recipes[k].ustensils[l]).toLowerCase();
-        }
-    }
 }
 
 export let tagFilter = [];
@@ -181,6 +148,7 @@ function addEventListenerToASpecificDropDown (dropdown){
 }
 
 const ingredients = document.querySelector('.dropdown-ingredients');
+console.log(ingredients.children)
 const appareils = document.querySelector('.dropdown-appareils');
 const ustentiles = document.querySelector('.dropdown-ustentiles');
 
