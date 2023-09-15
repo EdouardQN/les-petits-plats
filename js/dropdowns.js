@@ -92,7 +92,6 @@ function deleteTagFromArray(arrayTag, tagSelected){
     }
     return arrayTag;
 }
-// faire 3 paramètres pour chaque tag array
 export function checkIfRecipesIncludeArraysOfTagElements(tagIngredients, tagAppareils, tagUstentiles){
     const arrayOfFilteredRecipes = recipes.filter(
     recipe => 

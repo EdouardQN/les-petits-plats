@@ -11,7 +11,7 @@ function setRecipeInputFilterToAnArray(valueToBeFiltered){
     recipe => recipe.name.toLowerCase().includes(valueToBeFiltered) || 
         recipe.description.toLowerCase().includes(valueToBeFiltered) ||
         recipe.ingredients.some((el) => el.ingredient.toLowerCase().includes(valueToBeFiltered)
-    ));;
+    ));
     // console.log("filter element array", filteredElements)
     return filteredElements;
 }
