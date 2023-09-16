@@ -30,6 +30,26 @@ function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeConten
     })
 }
 
+function lookForAClassFromASpecificTag(tagToLookFor){
+    let isDropdownToLookFor;
+    for (let i=0; i<dropdownIngredients.length; i++){
+        if (tagToLookFor === dropdownIngredients[i].firstChild.innerText){
+            isDropdownToLookFor = dropdownIngredients;
+        }
+    }
+    for (let i=0; i<dropdownAppareils.length; i++){
+        if (tagToLookFor === dropdownAppareils[i].firstChild.innerText){
+            isDropdownToLookFor = dropdownAppareils;
+        }
+    }
+    for (let i=0; i<dropdownUstentiles.length; i++){
+        if (tagToLookFor === dropdownUstentiles[i].firstChild.innerText){
+            isDropdownToLookFor = dropdownUstentiles;
+        }
+    }
+    return isDropdownToLookFor;
+}
+
 
 function setDropdownElements(dropdownElement, arrayOfElements){
     let HtmlElementDropdown, HtmlElementDropdownChild;
@@ -62,10 +82,13 @@ function setDropdownElements(dropdownElement, arrayOfElements){
     }
 }
 
-export function croix(dropdownTagName){
-    for(let i=0; i<dropdownIngredientsIntoAnArray.length; i++){
-        if(dropdownIngredientsIntoAnArray[i].lastChild.innerText === dropdownTagName){
-            console.log("suppression");
+export function deleteTagFromArrayByClickingOnButton(dropdownTagName, dropdownArrayName){
+    for(let i=0; i<dropdownArrayName.length; i++){
+        if(dropdownArrayName[i].lastChild.innerText === dropdownTagName){
+            tagFilter = setTagFilter(dropdownArrayName[i]);
+            let filterCompared = compareBothFilterAndTagArrays();
+            isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
+            buildFilterCardDom(filterCompared, isFinalArrayEmptyButNotOneOfTheFiltersArrays);
         }
     }
 }
@@ -73,18 +96,16 @@ export function croix(dropdownTagName){
 function setSelectedTagInHTMLContainer(tagName){
     tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
     tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative pe-none", tagName);
-    tagHTMLContent.addEventListener('click', () => {
-        croix(tagName);
+    tagHTMLContent.addEventListener('click', (e) => {
+        console.log(e.target.parentNode.innerText);
+        let dropdownElementToLookFor = lookForAClassFromASpecificTag(tagName) 
+        deleteTagFromArrayByClickingOnButton(tagName, dropdownElementToLookFor);
     })
     tagDeleteIcon = createDocumentElementAndAttributes('i', "selected-tag-delete | bi-x-lg position-absolute pe-auto", null);
     tagHTMLContent.appendChild(tagDeleteIcon);
     tagHTML.append(tagHTMLContent);        
     tagSelectedContainer.appendChild(tagHTML);
 }
-// ${}
-
-
-
 
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
