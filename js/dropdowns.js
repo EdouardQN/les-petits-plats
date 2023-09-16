@@ -30,6 +30,7 @@ function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeConten
     })
 }
 
+
 function setDropdownElements(dropdownElement, arrayOfElements){
     let HtmlElementDropdown, HtmlElementDropdownChild;
     //no duplicates and ordered alpha
@@ -61,16 +62,29 @@ function setDropdownElements(dropdownElement, arrayOfElements){
     }
 }
 
+export function croix(dropdownTagName){
+    for(let i=0; i<dropdownIngredientsIntoAnArray.length; i++){
+        if(dropdownIngredientsIntoAnArray[i].lastChild.innerText === dropdownTagName){
+            console.log("suppression");
+        }
+    }
+}
 
 function setSelectedTagInHTMLContainer(tagName){
     tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
     tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative pe-none", tagName);
+    tagHTMLContent.addEventListener('click', () => {
+        croix(tagName);
+    })
     tagDeleteIcon = createDocumentElementAndAttributes('i', "selected-tag-delete | bi-x-lg position-absolute pe-auto", null);
     tagHTMLContent.appendChild(tagDeleteIcon);
     tagHTML.append(tagHTMLContent);        
     tagSelectedContainer.appendChild(tagHTML);
-    return tagHTML.childNodes[0].childNodes[0].data;
 }
+// ${}
+
+
+
 
 function deleteTagFromArray(arrayTag, tagSelected){
     for (let a=0; a<arrayTag.length; a++){
@@ -104,7 +118,7 @@ export function setTagFilter(dropdownTags){
     dropdownTags.classList.toggle("bg-primary");
     //check if the dropdown is already selected or not
     if(dropdownTags.classList.contains("bg-primary")){
-        const tagTextInContainer = setSelectedTagInHTMLContainer(dropdownTags.innerText);
+        setSelectedTagInHTMLContainer(dropdownTags.innerText);
         if(dropdownTags.classList.contains("ingredient")){
             arrayOfTagIngredients.push(dropdownTags.firstChild.innerText);
         }
