@@ -181,7 +181,6 @@ function addEventListenerToASpecificDropDown (dropdown){
 }
 
 const ingredients = document.querySelector('.dropdown-ingredients');
-console.log(ingredients.children)
 const appareils = document.querySelector('.dropdown-appareils');
 const ustentiles = document.querySelector('.dropdown-ustentiles');
 
