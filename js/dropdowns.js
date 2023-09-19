@@ -97,7 +97,7 @@ function setSelectedTagInHTMLContainer(tagName){
     tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
     tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative pe-none", tagName);
     tagHTMLContent.addEventListener('click', (e) => {
-        console.log(e.target.parentNode.innerText);
+        // console.log(e.target.parentNode.innerText);
         let dropdownElementToLookFor = lookForAClassFromASpecificTag(tagName) 
         deleteTagFromArrayByClickingOnButton(tagName, dropdownElementToLookFor);
     })
@@ -126,7 +126,11 @@ export function checkIfRecipesIncludeArraysOfTagElements(arrayOfTagElements){
                 arrayOfFilteredRecipes.push(recipes[k]);
             }
             else{
-                arrayOfFilteredRecipes.splice(k, 1);
+                for (let l=0; l<arrayOfFilteredRecipes.length; l++){
+                    if(arrayOfFilteredRecipes[l] === recipes[k]){
+                        arrayOfFilteredRecipes.splice(l, 1);
+                    }
+                }
             }
         }
     }
