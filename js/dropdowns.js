@@ -14,13 +14,6 @@ const tagSelectedContainer = document.querySelector('.tags-container');
 function lookForASpecificTag(searchBar, dropdownArrayContent, dropdownNodeContent){
     searchBar.addEventListener('input', (e) => {
         let inputValue = e.target.value.toLowerCase();
-        // const filteredDropdownArrayContent = dropdownArrayContent.filter(content => content.childNodes[0].innerText.includes(inputValue));
-        // console.log(filteredDropdownArrayContent)
-        // console.log("dropdownNodeContent", dropdownNodeContent);
-
-        // if (filteredDropdownArrayContent.length !== 0){
-        //     dropdownNodeContent = filteredDropdownArrayContent;
-        // }
         for (let i=0; i<dropdownArrayContent.length; i++){
             if(inputValue.length > 0){
                 if ((dropdownArrayContent[i].innerText).includes(inputValue)){
@@ -104,7 +97,7 @@ function setSelectedTagInHTMLContainer(tagName){
     tagHTML = createDocumentElementAndAttributes('div', "selected-tag | dropdown d-flex gap-5 m-3 flex-wrap justify-content-start", null);
     tagHTMLContent = createDocumentElementAndAttributes('button', "selected-tag-btn | btn btn-primary pe-5 position-relative pe-none", tagName);
     tagHTMLContent.addEventListener('click', (e) => {
-        console.log(e.target.parentNode.innerText);
+        // console.log(e.target.parentNode.innerText);
         let dropdownElementToLookFor = lookForAClassFromASpecificTag(tagName) 
         deleteTagFromArrayByClickingOnButton(tagName, dropdownElementToLookFor);
     })
@@ -116,9 +109,6 @@ function setSelectedTagInHTMLContainer(tagName){
 
 
 function deleteTagFromArray(arrayTag, tagSelected){
-    // console.log("arrayOfTags before", arrayTag)
-    // const deleteFromTag = arrayTag.filter(tag => {if(tag !== tagSelected) return tag});
-    // console.log("tag after", deleteFromTag);
     for (let a=0; a<arrayTag.length; a++){
         if (arrayTag[a] === tagSelected){
             arrayTag.splice(a, 1);
