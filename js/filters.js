@@ -76,7 +76,7 @@ export function buildFilterCardDom(finalFilteredArray, booleanForFilter){
 
 }
 
-inputSearch.addEventListener('input', (e) =>{
+inputSearch.addEventListener('input', () =>{
     inputFilter = setInputFilter();
     let filterCompared = compareBothFilterAndTagArrays();
     isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
