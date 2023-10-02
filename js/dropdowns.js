@@ -132,7 +132,7 @@ export function setTagFilter(dropdownTags){
     //check if the dropdown is already selected or not
     if(dropdownTags.classList.contains("bg-primary")){
         setSelectedTagInHTMLContainer(dropdownTags.innerText);
-        tabSelectedContainer.push(tagSelectedContainer.childNodes[1].childNodes[0])
+        tabSelectedContainer.push(tagSelectedContainer.childNodes[0].childNodes[0]);
         if(dropdownTags.classList.contains("ingredient")){
             arrayOfTagIngredients.push(dropdownTags.firstChild.innerText);
         }
