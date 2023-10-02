@@ -2,16 +2,26 @@ import {recipes} from './recipes.js';
 import {createDocumentElementAndAttributes, buildCardDom, rowCard, appendDomToHtml, nbrRecettes, recettes} from './cards.js';
 import {tagFilter, arrayOfTagIngredients, arrayOfTagAppareils, arrayOfTagUstentiles} from './dropdowns.js';
 
-let inputFilter = [], filteredDom, rowCardFiltered, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
+let inputFilter = [], filteredDom, rowCardFiltered, cardFilteredDOM, isFinalArrayEmptyButNotOneOfTheFiltersArrays = false;
 let cardContainer = document.querySelector('.card-container');
 export const inputSearch = document.querySelector('.search-recipe');
 
 function setRecipeInputFilterToAnArray(valueToBeFiltered){
-    const filteredElements = recipes.filter(
-    recipe => recipe.name.toLowerCase().includes(valueToBeFiltered) || 
-        recipe.description.toLowerCase().includes(valueToBeFiltered) ||
-        recipe.ingredients.some((el) => el.ingredient.toLowerCase().includes(valueToBeFiltered)
-    ));
+    let filteredElements = [], isAlreadyInTheArrayToFilter = false;
+    for(let i=0; i<recipes.length; i++){
+        if (((recipes[i].name).toLowerCase()).includes(valueToBeFiltered) || ((recipes[i].description).toLowerCase()).includes(valueToBeFiltered)){
+            filteredElements.push(recipes[i]);
+            isAlreadyInTheArrayToFilter = true;
+        }
+        for(let j=0; j<recipes[i].ingredients.length; j++){
+            if (((recipes[i].ingredients[j].ingredient).toLowerCase()).includes(valueToBeFiltered)){
+                if(!isAlreadyInTheArrayToFilter){ 
+                    filteredElements.push(recipes[i]); 
+                    isAlreadyInTheArrayToFilter = true;
+                }
+            }
+        }
+    }
     // console.log("filter element array", filteredElements)
     return filteredElements;
 }
@@ -36,8 +46,20 @@ export function compareBothFilterAndTagArrays(){
         finalFilteredArray = inputFilter;
     }
     else{
-        finalFilteredArray = inputFilter.filter((input) => tagFilter.includes(input));
-        // console.log("final array", finalFilteredArray)
+        if (inputFilter.length > tagFilter.length){
+            for(let i=0; i<inputFilter.length; i++){
+                if(inputFilter.includes(tagFilter[i])){
+                    finalFilteredArray.push(inputFilter[i]);
+                }
+            }
+        }
+        else if (tagFilter.length > inputFilter.length){
+            for(let i=0; i<tagFilter.length; i++){
+                if(tagFilter.includes(inputFilter[i])){
+                    finalFilteredArray.push(tagFilter[i]);
+                }
+            }
+        }
     }
     return finalFilteredArray;
 }
@@ -61,7 +83,7 @@ export function buildFilterCardDom(finalFilteredArray, booleanForFilter){
     cardContainer.innerHTML = '';
     filteredDom = buildCardDom(finalFilteredArray);
     rowCardFiltered = createDocumentElementAndAttributes('div', "card-row | row d-flex g-5", null);
-    appendDomToHtml(filteredDom, finalFilteredArray, rowCardFiltered);
+    cardFilteredDOM = appendDomToHtml(filteredDom, finalFilteredArray, rowCardFiltered);
     cardContainer.appendChild(rowCardFiltered);
     recettes.innerText = `${finalFilteredArray.length} recettes`;
     if (finalFilteredArray.length === 0 && !booleanForFilter){
@@ -76,7 +98,7 @@ export function buildFilterCardDom(finalFilteredArray, booleanForFilter){
 
 }
 
-inputSearch.addEventListener('input', () =>{
+inputSearch.addEventListener('input', (e) =>{
     inputFilter = setInputFilter();
     let filterCompared = compareBothFilterAndTagArrays();
     isFinalArrayEmptyButNotOneOfTheFiltersArrays = checkIfEitherInputOrTagFilterIsEmptyIfFinalArrayIs(filterCompared);
